@@ -6,3 +6,6 @@
 
 # readable pages + photos (only the encrypted copies in vault/ are uploaded)
 /private/
+
+# notes kept only on this computer
+/README.md
