@@ -137,13 +137,31 @@ setInterval(() => {
 
 /* =====================================================================
    MUSIC (starts by itself when he unlocks; no pop-ups)
-   Normal days: songs/nov16.mp3 (etc.) → song.mp3 → Ik Lamha on YouTube
-   1 December:  songs/dec01.mp3 → built-in Happy Birthday tune
+   A different romantic song every day, starting at its most-loved part.
+   1 December: built-in Happy Birthday tune.
+   (Optional: an mp3 in songs/ named nov16.mp3 … dec01.mp3 replaces that day's song.)
    ===================================================================== */
-const YT_ID = "K5jrhUi2Orw"; // Ik Lamha - Azaan Sami Khan
+const SONGS = { // id = YouTube video (only uploads that allow playing on other websites), start = second of the romantic part
+  "2026-11-16": { name: "Ik Lamha",                id: "aj4aZgTZ18g", start: 156 },
+  "2026-11-17": { name: "Tujh Mein Rab Dikhta Hai", id: "qoq8B8ThgEM", start: 36 },
+  "2026-11-18": { name: "Tum Mile",                id: "UcqI3uBKgTg", start: 65 },
+  "2026-11-19": { name: "Hawayein",                id: "cYOB941gyXI", start: 52 },
+  "2026-11-20": { name: "Gerua",                   id: "AEIVhBS6baE", start: 60 },
+  "2026-11-21": { name: "Jag Ghoomeya",            id: "t10sQb0Zmjs", start: 165 },
+  "2026-11-22": { name: "Kesariya",                id: "jcV4YKfeOMI", start: 0 },
+  "2026-11-23": { name: "Janam Janam",             id: "cgmhimjsczk", start: 119 },
+  "2026-11-24": { name: "Raataan Lambiyan",        id: "orYf6VDtj_k", start: 20 },
+  "2026-11-25": { name: "Saans",                   id: "VAt6TO2gdko", start: 190 },
+  "2026-11-26": { name: "Haule Haule",             id: "efTcN1JRB5s", start: 97 },
+  "2026-11-27": { name: "Dil Diyan Gallan",        id: "SAcpESN_Fk4", start: 21 },
+  "2026-11-28": { name: "Apna Bana Le",            id: "ElZfdU54Cp8", start: 40 },
+  "2026-11-29": { name: "Mann Bharryaa 2.0",       id: "1poXN3jF3Bw", start: 103 },
+  "2026-11-30": { name: "Pal Pal Dil Ke Paas",     id: "lgTHGZF3BQw", start: 68 }
+};
+const FALLBACK_SONG = SONGS["2026-11-16"]; // before 16 Nov: Ik Lamha
 const audio = $("song");
 const musicBtn = $("musicBtn");
-let mode = null, decided = null, paused = false;
+let mode = null, decided = null, paused = false, song = FALLBACK_SONG;
 const unlocked = () => document.body.classList.contains("unlocked");
 const isBirthdayToday = () => keyOf(now()) === BDAY;
 
@@ -152,17 +170,22 @@ async function exists(url) {
   catch { return false; }
 }
 async function decideSong() {
-  const daily = `songs/${pageKey(keyOf(now()))}.mp3`;
+  const key = keyOf(now());
+  const daily = `songs/${pageKey(key)}.mp3`;
   if (await exists(daily)) return { mode: "file", src: daily, label: isBirthdayToday() ? "Birthday song 🎂" : "Today's song" };
   if (isBirthdayToday()) return { mode: "synth", label: "Happy Birthday 🎂" };
-  if (await exists("song.mp3")) return { mode: "file", src: "song.mp3", label: "Ik Lamha" };
-  return { mode: "yt", label: "Ik Lamha" };
+  const s = SONGS[key] || FALLBACK_SONG;
+  return { mode: "yt", song: s, label: s.name };
 }
 function setup(choice) {
   mode = choice.mode;
   $("musicLabel").textContent = choice.label;
   if (mode === "file") { audio.src = choice.src; audio.load(); }
-  if (mode === "yt") loadYouTube();
+  if (mode === "yt") {
+    song = choice.song;
+    if (ytReady) { yt.mute(); yt.loadVideoById({ videoId: song.id, startSeconds: song.start }); }
+    else loadYouTube();
+  }
 }
 
 // YouTube: plays hidden, starts muted (always allowed), sound turns on at unlock
@@ -171,11 +194,15 @@ function loadYouTube() {
   if (ytLoaded) return; ytLoaded = true;
   window.onYouTubeIframeAPIReady = () => {
     yt = new YT.Player("ytPlayer", {
-      videoId: YT_ID, width: 200, height: 120,
-      playerVars: { autoplay: 1, mute: 1, controls: 0, loop: 1, playlist: YT_ID, playsinline: 1, rel: 0 },
+      videoId: song.id, width: 200, height: 120,
+      playerVars: { autoplay: 1, mute: 1, controls: 0, start: song.start, playsinline: 1, rel: 0 },
       events: {
         onReady: () => { ytReady = true; yt.mute(); yt.playVideo(); if (ytWant) ytStart(); },
-        onStateChange: () => setPlayingUI(),
+        onStateChange: e => {
+          // when the song ends, go back to the romantic part and play again
+          if (e.data === YT.PlayerState.ENDED) { yt.seekTo(song.start, true); yt.playVideo(); }
+          setPlayingUI();
+        },
         onError: () => { mode = "none"; musicBtn.style.display = "none"; }
       }
     });
@@ -185,7 +212,7 @@ function loadYouTube() {
   document.head.appendChild(s);
 }
 function ytStart() {
-  yt.seekTo(0, true); yt.unMute(); yt.setVolume(85); yt.playVideo();
+  yt.seekTo(song.start, true); yt.unMute(); yt.setVolume(85); yt.playVideo();
   setTimeout(() => { if (!isPlaying()) armRetry(); }, 1800);
 }
 
