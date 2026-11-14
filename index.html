@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Hamad</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Baloo+2:wght@500;800&family=Bebas+Neue&family=Caveat:wght@600;700&family=Cinzel:wght@500;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@500;700&family=Great+Vibes&family=Pacifico&family=Patrick+Hand&family=Playfair+Display:wght@500;800&family=Poppins:wght@300;400;600&family=Press+Start+2P&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="locks.css">
+</head>
+<body class="locked">
+
+<div id="hearts-bg" aria-hidden="true"></div>
+
+<!-- ============ LOCK SCREEN ============ -->
+<section id="lock">
+  <div class="lock-card">
+    <div class="lock-clock" id="lockClock"></div>
+    <div class="lock-icon" id="lockIcon"></div>
+    <div class="scene3d">
+      <div class="heart3d" id="heart3d">
+        <div class="h-layer"></div><div class="h-layer"></div><div class="h-layer"></div>
+        <div class="h-layer"></div><div class="h-layer"></div><div class="h-layer"></div>
+        <div class="keyhole"></div>
+      </div>
+      <div class="shadow3d"></div>
+    </div>
+    <h1 class="lock-title" id="lockTitle">Hey Khuchu Puchu 💌</h1>
+    <p class="lock-sub" id="lockSub">Enter the secret password to open my heart</p>
+
+    <form class="pass-form" id="passForm" autocomplete="off">
+      <div class="pass-wrap">
+        <input type="password" id="passInput" placeholder="Secret password…" aria-label="Password">
+        <button type="button" class="eye" id="eyeBtn" aria-label="Show password">👁️</button>
+      </div>
+      <button type="submit" class="btn unlock-btn" id="unlockBtn">Unlock 💖</button>
+    </form>
+    <p class="lock-msg" id="lockMsg">&nbsp;</p>
+    <button type="button" class="hint-btn" id="hintBtn">💡 Need a hint?</button>
+    <p class="hint" id="hint">Hint: our names mixed together + the day we got engaged 💍</p>
+    <p class="lock-note" id="lockNote">🌙 Every night after 12, a new surprise opens just for you</p>
+  </div>
+</section>
+
+<!-- ============ TODAY'S SURPRISE ============ -->
+<div class="notice" id="notice">🌙 A new surprise opens every night after 12. Come back tomorrow!</div>
+<iframe id="dayFrame" title="Today's surprise" allow="autoplay"></iframe>
+
+<!-- ============ AFTER 1 DECEMBER ============ -->
+<section id="ended">
+  <div class="ended-card">
+    <div class="ended-heart">🤍</div>
+    <h1>This surprise has ended</h1>
+    <p>This little website was made with love for Hamad's birthday, 1 December 2026.<br>Thank you for visiting. 🎂</p>
+  </div>
+</section>
+
+<!-- music -->
+<audio id="song" loop preload="auto"></audio>
+<div class="yt-hidden" aria-hidden="true"><div id="ytPlayer"></div></div>
+<button id="musicBtn" class="music-btn" title="Our song">
+  <span class="disc">🎵</span><span class="m-label" id="musicLabel">Ik Lamha</span>
+</button>
+
+<canvas id="confetti"></canvas>
+<script src="themes.js"></script>
+<script src="locks.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

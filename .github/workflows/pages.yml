@@ -1,0 +1,49 @@
+name: Publish website
+
+# Publishes the birthday site to GitHub Pages.
+# From 2 December 2026, 00:00 Pakistan time (1 Dec 19:00 UTC), it publishes only the
+# "This surprise has ended" page instead, so the website goes down by itself.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 19 1 12 *"   # 1 Dec 19:00 UTC = 2 Dec 00:00 PKT
+    - cron: "30 19 1 12 *"  # second try, in case the first one is delayed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Choose what to publish
+        run: |
+          mkdir -p _site
+          if [ "$(date -u +%s)" -ge "$(date -u -d '2026-12-01T19:00:00Z' +%s)" ]; then
+            echo "Birthday is over: publishing the closed page"
+            cp site-closed/index.html _site/index.html
+            touch _site/.nojekyll
+            echo '<meta http-equiv="refresh" content="0;url=/Hamad-s-Birthday/">' > _site/404.html
+          else
+            echo "Publishing the birthday website"
+            rsync -a --exclude '.git' --exclude '.github' --exclude '_site' --exclude 'site-closed' --exclude 'README.md' --exclude 'tools' --exclude 'private' ./ _site/
+            touch _site/.nojekyll
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,8 @@
+# original full-size photos (smaller copies live in images/)
+/*.jpg
+/*.JPG
+/*.jpeg
+/*.png
+
+# readable pages + photos (only the encrypted copies in vault/ are uploaded)
+/private/

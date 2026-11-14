@@ -1,0 +1,22 @@
+/* main shell: notice bar + today's page frame + ended screen */
+.lock-note{margin-top:14px;font-size:.82rem;font-weight:600;color:var(--strong);background:color-mix(in srgb,var(--accent) 12%,white);
+  border-radius:12px;padding:8px 10px}
+
+.notice{position:fixed;top:0;left:0;right:0;height:40px;z-index:40;display:none;align-items:center;justify-content:center;padding:0 12px;
+  font-family:'Fredoka',sans-serif;font-size:.85rem;color:#fff;text-align:center;line-height:1.2;
+  background:linear-gradient(90deg,var(--accent2),var(--accent3));box-shadow:0 2px 10px rgba(0,0,0,.15)}
+#dayFrame{position:fixed;top:40px;left:0;width:100%;height:calc(100% - 40px);border:0;display:none;z-index:30;background:var(--bgC)}
+body.unlocked .notice{display:flex}
+body.unlocked #dayFrame{display:block}
+
+#ended{position:fixed;inset:0;z-index:70;display:none;place-items:center;padding:16px;text-align:center;
+  background:radial-gradient(circle at 50% 30%,#3a2a4a,#140c1c 70%);color:#f3eaff;font-family:'Poppins',sans-serif}
+body.ended #ended{display:grid}
+body.ended #lock,body.ended #hearts-bg,body.ended .music-btn{display:none !important}
+.ended-card{max-width:420px}
+.ended-heart{font-size:3.5rem;margin-bottom:10px;animation:float 4s ease-in-out infinite}
+#ended h1{font-family:'Great Vibes',cursive;font-size:clamp(2.4rem,9vw,3.4rem);color:#ffd6f0;font-weight:400}
+#ended p{margin-top:12px;line-height:1.8;opacity:.85}
+@keyframes float{50%{transform:translateY(-10px)}}
+
+@media (max-width:420px){.notice{font-size:.75rem}}
